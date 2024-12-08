@@ -1,0 +1,56 @@
+{
+  "Siti": {
+         "StreamingCommunity": {
+             "domain": "buzz",
+             "SC_ForwardProxy": "1"
+         },
+         "Filmpertutti": {
+             "domain": "app"
+         },
+         "Tantifilm":{
+             "domain": "bond",
+             "TF_ForwardProxy": "1",
+             "TF_PROXY": "0"
+         },
+         "Mysterius":{
+             "enabled": "0"    
+         },
+        "LordChannel":{
+             "domain":"com"
+        },
+        "StreamingWatch":{
+            "domain":"org"
+        },
+        "CB01":{
+            "domain":"technology",
+            "CB_PROXY":"0"
+        },
+        "DDLStream":{
+            "domain":"co",
+            "cookies" : {
+                "ips4_device_key": "b6f084be79c28bb53ecfc556fd7a2a70",
+                "ips4_IPSSessionFront": "f2b9db91793e084cf2003a07c563e6aa",
+                "ips4_member_id": "4029711",
+                "ips4_login_key": "41b6a70b16cce2fd39482f5b21a9c35f"
+                }
+        },
+        "AnimeWorld":{
+            "domain":"so"
+        },
+        "SkyStreaming":{
+            "domain":"guru"
+        },
+        "DaddyLiveHD":{
+            "enabled":"1"
+        }
+ },
+ "General":{
+     "load_env": "0",
+     "HOST": "0.0.0.0",
+     "PORT": "8080",
+     "Name": "MammaMia",
+     "Icon": "🤗️",
+     "Public_Instance": "0",
+     "Global_Proxy": "0"
+     }
+}
