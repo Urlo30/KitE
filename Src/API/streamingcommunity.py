@@ -52,6 +52,8 @@ async def search(query,date,ismovie, client,SC_FAST_SEARCH,movie_id):
     random_headers['Content-Type'] = 'application/json'
     #Do a request to get the ID of serie/move and it's slug in the URL
     response = await client.get(ForwardProxy + query, headers = random_headers, allow_redirects=True)
+    print(SC_ForwardProxy)
+    print(ForwardProxy + query)
     print(response)
     response = response.json()
 
