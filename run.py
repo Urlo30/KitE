@@ -324,6 +324,7 @@ async def addon_stream(request: Request,config, type, id,):
                             quality = results[1]
                             name = unquote(url_ddlstream.split('/')[-1].replace(".mp4",""))
                             url_ddlstream = f'{MFP_url}/proxy/stream?api_password={MFP_password}&d={url_ddlstream}&h_Referer=https://ddlstreamitaly.{DDL_DOMAIN}/'
+                            print(url_ddlstream)
                             streams['streams'].append({'name': f"{Name}\n{quality}",'title': f'{Icon}DDLStream \n {name}', 'url': url_ddlstream, 'behaviorHints': {'bingeGroup': 'ddlstream'}}) 
                 if provider_maps['CB01'] == "1":
                     url_cbo1 = await cb01(id,client,MFP)
