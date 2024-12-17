@@ -46,7 +46,7 @@ async def get_supervideo_link(link,client):
 
 async def search(clean_id,client):
     try:
-        response = await client.get(f'https://guardaserietv.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124")
+        response = await client.get(f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124")
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('div',class_="mlnh-2"))
         div_mlnh2 = soup.select_one('div.mlnh-2:nth-of-type(2)')
         a_tag = div_mlnh2.find('h2').find('a')
