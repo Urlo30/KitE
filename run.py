@@ -239,7 +239,10 @@ async def addon_stream(request: Request,config, type, id,):
                         list_sources = extra_sources[id]
                         for item in list_sources:
                             i = i+1
-                            streams['streams'].append({'title':f"{Icon}Server {i} " + channel['title'],'url': item})
+                            if "iran" in item:
+                                streams['streams'].append({'title':f"{Icon}Server {i} " + channel['title'],'url': item, "behaviorHints": {"notWebReady": True, "proxyHeaders": {"request": {"Origin": "https://babaktv.com", "Referer": "https://babaktv.com/"}}}})
+                            else:
+                                streams['streams'].append({'title':f"{Icon}Server {i} " + channel['title'],'url': item})
                     if id in skystreaming and SKY == "1":
                         urls = await get_skystreaming(id,client)
                         for url in urls:
@@ -324,9 +327,8 @@ async def addon_stream(request: Request,config, type, id,):
                 if provider_maps['STREAMINGWATCH'] == "1" and SW == "1":
                     url_streamingwatch,Referer = await streamingwatch(id,client)
                     if url_streamingwatch:  
-                        print(Referer)
-                        print(f"Streaming Watch Found Results for {id}")
-                        streams['streams'].append({'title': f'{Icon}StreamingWatch 720/1080p', 'url': url_streamingwatch,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": Referer}}, 'notWebReady': True, 'bingeGroup': 'streamingwatch'}})
+                        print(f"StreamingWatch Found Results for {id}")
+                        streams['streams'].append({'name': f"{Name}\n720/1080p",'title': f'{Icon}StreamingWatch', 'url': url_streamingwatch,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": Referer}}, 'notWebReady': True, 'bingeGroup': 'streamingwatch'}})
                 if provider_maps['DDLSTREAM'] and DDL == "1":
                     if MFP == "1":
                         results = await ddlstream(id,client)

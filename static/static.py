@@ -184,7 +184,7 @@ HTML = """
         <div id="additionalText">
             <h2>This addon provides Movie, Series, Anime, and Live TV HTTPS Streams.<br> https://github.com/UrloMythus/MammaMia/</h2>
         </div>
-        <p class="description">Configure your providers: Note that if you enable Fast Search results will be less accurate but faster. <br> Filmpertutti and Tantifilm won't work if you are not using a local (on your PC) instance.</p>
+        <p class="description">Configure your providers: Note that if you enable Fast Search results will be less accurate but faster</p>
         <h3 class="gives">Select Providers:</h3>
         <form class="pure-form" id="provider-form">
             <div class="provider-group">
@@ -218,6 +218,13 @@ HTML = """
                 </label>
             </div>
             <div class="provider-group">
+                <label for="animeworld" class="provider-label">
+                    <input type="checkbox" id="animeworld"> Animeworld
+                </label>
+            </div>
+            <p>To use the following provider you need to have a local instance/ set the proxy enviroment variable... Leave it as it is if you do not know what this is about
+            </p>
+            <div class="provider-group">
                 <label for="tantifilm" class="provider-label">
                     <input type="checkbox" id="tantifilm"> Tantifilm
                 </label>
@@ -226,17 +233,18 @@ HTML = """
                         <input type="checkbox" id="fast_search_tf"> Fast Search
                     </label>
                 </span>
+             </div>
+          <div>
+            <p>To use the following providers you need to use a local instance or else you need to set up Mediaflow-proxy... Search it on GitHub
+            </p>
             </div>
             <div class="provider-group">
                 <label for="filmpertutti" class="provider-label">
-                    <input type="checkbox" id="filmpertutti"> Filmpertutti
+                    <input type="checkbox" id="filmpertutti"> 
+                    Filmpertutti
                 </label>
             </div>
-            <div class="provider-group">
-                <label for="animeworld" class="provider-label">
-                    <input type="checkbox" id="animeworld"> Animeworld
-                </label>
-            </div>
+          
             <div class="provider-group">
                 <label for="cb01" class="provider-label">
                     <input type="checkbox" id="cb01"> CB01
