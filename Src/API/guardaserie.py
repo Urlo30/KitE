@@ -2,13 +2,13 @@ from Src.Utilities.info import  is_movie
 from bs4 import BeautifulSoup,SoupStrainer
 import re
 import Src.Utilities.config as config
+from fake_headers import Headers  
 
 GS_DOMAIN = config.GS_DOMAIN
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-    'Accept-Language': 'en-US,en;q=0.5'
-}
+random_headers = Headers()
+
 async def get_supervideo_link(link,client):
+    headers = random_headers.generate()
     response = await client.get(link, headers=headers, allow_redirects=True,timeout = 30)
     s2 = re.search(r"\}\('(.+)',.+,'(.+)'\.split", response.text).group(2)
     terms = s2.split("|")
@@ -46,7 +46,9 @@ async def get_supervideo_link(link,client):
 
 async def search(clean_id,client):
     try:
-        response = await client.get(f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124")
+        headers = random_headers.generate()
+        response = await client.get(f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers)
+        print("Response1",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('div',class_="mlnh-2"))
         div_mlnh2 = soup.select_one('div.mlnh-2:nth-of-type(2)')
         a_tag = div_mlnh2.find('h2').find('a')
@@ -60,7 +62,9 @@ async def search(clean_id,client):
 
 async def player_url(page_url, season, episode,client):
     try:
-        response = await client.get(page_url, allow_redirects=True, impersonate = "chrome124")
+        headers = random_headers.generate()
+        response = await client.get(page_url, allow_redirects=True, impersonate = "chrome124", headers = headers)
+        print("Response2",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('a'))
         a_tag = soup.find('a', id = f"serie-{season}_{episode}")
         href = a_tag['data-link']

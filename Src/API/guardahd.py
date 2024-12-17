@@ -2,12 +2,15 @@ from Src.Utilities.info import  is_movie
 from bs4 import BeautifulSoup,SoupStrainer
 import re
 import Src.Utilities.config as config
+from fake_headers import Headers  
+
 GHD_DOMAIN = config.GHD_DOMAIN
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-    'Accept-Language': 'en-US,en;q=0.5'
-}
+
+random_headers = Headers()
+
+
 async def get_supervideo_link(link,client):
+    headers = random_headers.generate()
     response = await client.get(link, headers=headers, allow_redirects=True,timeout = 30)
     s2 = re.search(r"\}\('(.+)',.+,'(.+)'\.split", response.text).group(2)
     terms = s2.split("|")
@@ -38,7 +41,8 @@ async def get_supervideo_link(link,client):
     return final_url
 
 async def search(clean_id,client):
-    response = await client.get(f"https://mostraguarda.{GHD_DOMAIN}/set-movie-a/{clean_id}", allow_redirects=True, impersonate = "chrome124")
+    headers = random_headers.generate()
+    response = await client.get(f"https://mostraguarda.{GHD_DOMAIN}/set-movie-a/{clean_id}", allow_redirects=True, impersonate = "chrome124", headers = headers)
     soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('li'))
     li_tag = soup.find('li', class_='')
     href = "https:" + li_tag['data-link']
