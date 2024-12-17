@@ -2,28 +2,35 @@
   "Siti": {
          "StreamingCommunity": {
              "domain": "family",
-             "SC_ForwardProxy": "1"
+             "SC_ForwardProxy": "0",
+             "SC_PROXY": "0",
+             "enabled": "1"
          },
          "Filmpertutti": {
-             "domain": "app"
+             "domain": "app",
+             "enabled": "1"
          },
          "Tantifilm":{
              "domain": "bond",
-             "TF_ForwardProxy": "1",
-             "TF_PROXY": "0"
+             "TF_ForwardProxy": "0",
+             "TF_PROXY": "0",
+             "enabled": "1"
          },
          "Mysterius":{
              "enabled": "0"    
          },
         "LordChannel":{
-             "domain":"com"
+             "domain":"com",
+             "enabled":"1"
         },
         "StreamingWatch":{
-            "domain":"org"
+            "domain":"org",
+            "enabled":"1"
         },
         "CB01":{
             "domain":"technology",
-            "CB_PROXY":"0"
+            "CB_PROXY":"0",
+            "enabled":"1"
         },
         "DDLStream":{
             "domain":"co",
@@ -32,20 +39,32 @@
                 "ips4_IPSSessionFront": "f2b9db91793e084cf2003a07c563e6aa",
                 "ips4_member_id": "4029711",
                 "ips4_login_key": "41b6a70b16cce2fd39482f5b21a9c35f"
-                }
+                },
+            "enabled":"1"
+        },
+        "Guardaserie":{
+            "domain":"pro",
+            "enabled":"1"
+        },
+        "GuardaHD":{
+            "domain":"stream",
+            "enabled":"1"
         },
         "AnimeWorld":{
-            "domain":"so"
+            "domain":"so",
+            "enabled":"1"
         },
         "SkyStreaming":{
-            "domain":"guru"
+            "domain":"my",
+            "enabled":"1"
         },
         "DaddyLiveHD":{
+            "domain":"to",
             "enabled":"1"
         }
  },
  "General":{
-     "load_env": "0",
+     "load_env": "1",
      "HOST": "0.0.0.0",
      "PORT": "8080",
      "Name": "MammaMia",

@@ -208,6 +208,16 @@ HTML = """
                 </label>
             </div>
             <div class="provider-group">
+                <label for="guardaserie" class="provider-label">
+                    <input type="checkbox" id="guardaserie"> Guardaserie
+                </label>
+            </div>
+            <div class="provider-group">
+                <label for="guardahd" class="provider-label">
+                    <input type="checkbox" id="guardahd"> GuardaHD
+                </label>
+            </div>
+            <div class="provider-group">
                 <label for="tantifilm" class="provider-label">
                     <input type="checkbox" id="tantifilm"> Tantifilm
                 </label>
@@ -283,6 +293,8 @@ HTML = """
             "livetv": "LIVETV",
             "cb01": "CB",
             "ddlstream": "DDL",
+            "guardaserie": "GS",
+            "guardahd": "GHD",
             "mediaflowproxy": "MFP"
         };
 

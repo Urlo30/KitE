@@ -303,7 +303,7 @@ async def test_animeworld():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
         # Replace with actual id, for example 'anime_id:episode' format
-        test_id = "tt0106168:1:1"  # This is an example ID format
+        test_id = "tmdb245256:1:1"  # This is an example ID format
         MFP = "1"
         results = await cb01(test_id, client,MFP)
 

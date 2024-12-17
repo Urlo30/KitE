@@ -7,6 +7,8 @@ from  Src.API.lordchannel import lordchannel
 from  Src.API.streamingwatch import streamingwatch
 from Src.API.ddlstream import ddlstream
 from Src.API.cb01 import cb01
+from Src.API.guardaserie import guardaserie
+from Src.API.guardahd import guardahd
 import  Src.Utilities.config as config
 import logging
 from Src.API.okru import okru_get_url
@@ -35,10 +37,22 @@ else:
 # Configure config
 MYSTERIUS = config.MYSTERIUS
 DLHD = config.DLHD
+SC = config.SC
+FT = config.FT
+TF = config.TF
+LC = config.LC
+SW = config.SW
+AW = config.AW
+SKY = config.SKY
+CB = config.CB
+DDL = config.DDL
+GS = config.GS
+GHD = config.GHD
 HOST = config.HOST
 PORT = int(config.PORT)
 Icon = config.Icon
 Name = config.Name
+SKY_DOMAIN = config.SKY_DOMAIN
     #Cool code to set the hugging face if the service is hosted there.
 if MYSTERIUS == "1":
     from Src.API.cool import cool
@@ -50,12 +64,12 @@ app.add_middleware(SlowAPIMiddleware)
 User_Agent= "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 OPR/111.0.0.0"
 MANIFEST = {
     "id": "org.stremio.mammamia",
-    "version": "1.1.0",
+    "version": "1.5.0",
     "catalogs": [
         {
             "type": "tv",
             "id": "tv_channels",
-            "name": "TV Channels",
+            "name": "MammaMia",
             "behaviorHints": {
                 "configurable": True,
                 "configurationRequired": True
@@ -89,7 +103,6 @@ def config():
 @app.get('/{config:path}/manifest.json')
 def addon_manifest(config: str): 
     manifest_copy = MANIFEST.copy()  
-    print(config)
     if "LIVETV"  in config:
         return respond_with(manifest_copy)
     elif "LIVETV" not in config:
@@ -110,7 +123,6 @@ def root(request: Request):
     html_content = HTML.replace("{instance_url}", instance_url)
     return html_content
 async def addon_catalog(type: str, id: str, genre: str = None):
-    print(f"Received genre parameter: {genre}")
     if type != "tv":
         raise HTTPException(status_code=404)
     
@@ -137,7 +149,7 @@ async def first_catalog(request: Request,type: str, id: str, genre: str = None):
     catalogs = await addon_catalog(type, id,genre)
     return respond_with(catalogs)
 
-@app.get('/{config}/catalog/{type}/{id}/genre={genre}.json')
+@app.get('/{config:path}/catalog/{type}/{id}/genre={genre}.json')
 async def first_catalog(type: str, id: str, genre: str = None):
     catalogs = await addon_catalog(type, id,genre)
     return respond_with(catalogs)
@@ -201,7 +213,8 @@ async def addon_stream(request: Request,config, type, id,):
         MFP_CREDENTIALS = [MFP_url, MFP_password]
         if MFP_url and MFP_password:
             MFP = "1"
-
+    else:
+        MFP = "0"
     async with AsyncSession(proxies = proxies) as client:
         if type == "tv":
             for channel in STREAM["channels"]:
@@ -213,6 +226,7 @@ async def addon_stream(request: Request,config, type, id,):
                             'title': f"{Icon}Server {i} " + f" "+ channel['name'] + " " + channel['title'] ,
                             'url': channel['url']
                             })    
+                    '''    
                     if id in okru:
                         i = i+1
                         channel_url = await okru_get_url(id,client)
@@ -220,20 +234,18 @@ async def addon_stream(request: Request,config, type, id,):
                             'title':  f"{Icon}Server {i} " +  channel['title'] + " OKRU",
                             'url': channel_url
                         })
+                    '''    
                     if id in extra_sources:
                         list_sources = extra_sources[id]
                         for item in list_sources:
                             i = i+1
                             streams['streams'].append({'title':f"{Icon}Server {i} " + channel['title'],'url': item})
-                    '''
-                    if id in skystreaming:
+                    if id in skystreaming and SKY == "1":
                         urls = await get_skystreaming(id,client)
                         for url in urls:
                             i = i+1
                             Host = urls[url]
-                            print(url,Host)
-                            streams['streams'].append({'title': f'{Icon}Server {i}', 'url': url, "behaviorHints": {"notWebReady": True, "proxyHeaders": {"request": {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.5", "Origin": "https://skystreaming.guru", "DNT": "1", "Sec-GPC": "1", "Connection": "keep-alive", "Referer": "https://skystreaming.guru/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Pragma": "no-cache", "Cache-Control": "no-cache", "TE": "trailers","Host": Host}}}})
-                    '''
+                            streams['streams'].append({'title': f'{Icon}Server S {i}' + channel['title'], 'url': url, "behaviorHints": {"notWebReady": True, "proxyHeaders": {"request": {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.5", "Origin": f"https://skystreaming.{SKY_DOMAIN}", "DNT": "1", "Sec-GPC": "1", "Connection": "keep-alive", "Referer": f"https://skystreaming.{SKY_DOMAIN}/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Pragma": "no-cache", "Cache-Control": "no-cache", "TE": "trailers","Host": Host}}}})
                     if MFP == "1":  
                         if id in webru_vary:
                             i = i+1
@@ -251,7 +263,7 @@ async def addon_stream(request: Request,config, type, id,):
         elif "tt" in id or "tmdb" in id or "kitsu" in id:
             print(f"Handling movie or series: {id}")
             if "kitsu" in id:
-                if provider_maps['ANIMEWORLD'] == "1":
+                if provider_maps['ANIMEWORLD'] == "1" and AW == "1":
                     animeworld_urls = await animeworld(id,client)
                     if animeworld_urls:
                         print(f"AnimeWorld Found Results for {id}")
@@ -271,7 +283,7 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"Mysterius Found Results for {id}")
                         for resolution, link in results.items():
                             streams['streams'].append({'title': f'{Icon}Mysterious {resolution}', 'url': link})
-                if provider_maps['STREAMINGCOMMUNITY'] == "1":
+                if provider_maps['STREAMINGCOMMUNITY'] == "1" and SC == "1":
                     SC_FAST_SEARCH = provider_maps['SC_FAST_SEARCH']
                     url_streaming_community,url_720_streaming_community,quality_sc, slug_sc = await streaming_community(id,client,SC_FAST_SEARCH)
                     if url_streaming_community is not None:
@@ -281,7 +293,7 @@ async def addon_stream(request: Request,config, type, id,):
                             streams['streams'].append({"name": f'{Name}\n720p Max','title': f'{Icon}StreamingCommunity\n  {slug_sc.replace("-"," ").capitalize()}', 'url': url_720_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
                         else:
                             streams['streams'].append({"name": f'{Name}\n{quality}p Max','title': f'{Icon}StreamingCommunity\n{slug_sc.replace("-","").capitalize()}', 'url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
-                if provider_maps['LORDCHANNEL'] == "1":
+                if provider_maps['LORDCHANNEL'] == "1" and LC == "1":
                     url_lordchannel,quality_lordchannel = await lordchannel(id,client)
                     if quality_lordchannel == "FULL HD" and url_lordchannel !=  None:
                         print(f"LordChannel Found Results for {id}")
@@ -289,7 +301,7 @@ async def addon_stream(request: Request,config, type, id,):
                     elif url_lordchannel !=  None:
                         print(f"LordChannel Found Results for {id}")
                         streams['streams'].append({"name": f"{Name}\n720p",'title': f'{Icon}LordChannel 720p', 'url': url_lordchannel, 'behaviorHints': {'bingeGroup': 'lordchannel720'}})            
-                if provider_maps['FILMPERTUTTI'] == "1":
+                if provider_maps['FILMPERTUTTI'] == "1" and FT == "1":
                     url_filmpertutti = await filmpertutti(id,client, MFP)
                     if url_filmpertutti is not None:
                         if MFP == "1":
@@ -299,10 +311,9 @@ async def addon_stream(request: Request,config, type, id,):
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}Filmpertutti', 'url': url_filmpertutti,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": "Mozilla/5.0 (Windows NT 10.10; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}}, 'notWebReady': True, 'bingeGroup': 'filmpertutti'}})
                         print(f"Filmpertutti Found Results for {id}")
                         
-                if provider_maps['TANTIFILM'] == "1":
+                if provider_maps['TANTIFILM'] == "1" and TF == "1":
                     TF_FAST_SEARCH = provider_maps['TF_FAST_SEARCH']                    
                     url_tantifilm = await tantifilm(id,client,TF_FAST_SEARCH)
-                    print(url_tantifilm)    
                     if url_tantifilm != "{'Doodstream HD': None}" and url_tantifilm != None:
                         print(f"TantiFilm Found Results for {id}")
                         if not isinstance(url_tantifilm, str):
@@ -310,12 +321,13 @@ async def addon_stream(request: Request,config, type, id,):
                                 streams['streams'].append({'title': f'{Icon}Tantifilm {title}', 'url': url,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": "https://d000d.com/"}}, 'notWebReady': True, 'bingeGroup': f'tantifilm{title}'}})
                         else:
                             streams['streams'].append({'title': f'{Icon}Tantifilm', 'url': url_tantifilm,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": "https://d000d.com/"}}, 'notWebReady': True, 'bingeGroup': 'tantifilm'}})
-                if provider_maps['STREAMINGWATCH'] == "1":
-                    url_streamingwatch = await streamingwatch(id,client)
+                if provider_maps['STREAMINGWATCH'] == "1" and SW == "1":
+                    url_streamingwatch,Referer = await streamingwatch(id,client)
                     if url_streamingwatch:  
+                        print(Referer)
                         print(f"Streaming Watch Found Results for {id}")
-                        streams['streams'].append({'name': f"{Name}\n720p",'title': f'{Icon}StreamingWatch', 'url': url_streamingwatch, 'behaviorHints': {'bingeGroup': 'streamingwatch'}}) 
-                if provider_maps['DDLSTREAM']:
+                        streams['streams'].append({'title': f'{Icon}StreamingWatch 720/1080p', 'url': url_streamingwatch,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": Referer}}, 'notWebReady': True, 'bingeGroup': 'streamingwatch'}})
+                if provider_maps['DDLSTREAM'] and DDL == "1":
                     if MFP == "1":
                         results = await ddlstream(id,client)
                         if  results:
@@ -324,9 +336,8 @@ async def addon_stream(request: Request,config, type, id,):
                             quality = results[1]
                             name = unquote(url_ddlstream.split('/')[-1].replace(".mp4",""))
                             url_ddlstream = f'{MFP_url}/proxy/stream?api_password={MFP_password}&d={url_ddlstream}&h_Referer=https://ddlstreamitaly.{DDL_DOMAIN}/'
-                            print(url_ddlstream)
                             streams['streams'].append({'name': f"{Name}\n{quality}",'title': f'{Icon}DDLStream \n {name}', 'url': url_ddlstream, 'behaviorHints': {'bingeGroup': 'ddlstream'}}) 
-                if provider_maps['CB01'] == "1":
+                if provider_maps['CB01'] == "1" and CB == "1":
                     url_cbo1 = await cb01(id,client,MFP)
                     if url_cbo1:
                         print(f"CB01 Found Results for {id}")
@@ -339,6 +350,16 @@ async def addon_stream(request: Request,config, type, id,):
 
                     else:
                         streams['streams'].append({'name': f"{Name}",'title': f'{Icon}CB01\n Will work only on a local instance!', 'url': url_cbo1, 'behaviorHints': {'bingeGroup': 'cb01'}})
+            if provider_maps['GUARDASERIE'] and GS == "1":
+                url_guardaserie = await guardaserie(id,client)
+                if url_guardaserie:
+                    print(f"Guardaserie Found Results for {id}")
+                    streams['streams'].append({'name': f"{Name}",'title': f'{Icon}Guardaserie', 'url': url_guardaserie, 'behaviorHints': {'bingeGroup': 'guardaserie'}})
+            if provider_maps['GUARDAHD'] and GHD == "1":
+                url_guardahd = await guardahd(id,client)
+                if url_guardahd:
+                    print(f"GuardaHD Found Results for {id}")
+                    streams['streams'].append({'name': f"{Name}",'title': f'{Icon}GuardaHD', 'url': url_guardahd, 'behaviorHints': {'bingeGroup': 'guardahd'}})
         if not streams['streams']:
             raise HTTPException(status_code=404)
 

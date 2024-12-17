@@ -78,6 +78,7 @@ async def hls_url(hdplayer,client):
     response = await client.get(hdplayer, allow_redirects=True, impersonate = "chrome120")
     match = re.search(r'sources:\s*\[\s*\{\s*file\s*:\s*"([^"]*)"', response.text)
     url = match.group(1)
+    
     return url
 async def streamingwatch(imdb,client):
     try:
@@ -103,10 +104,10 @@ async def streamingwatch(imdb,client):
        showname = showname.replace(" ", "+").replace("–", "+").replace("—","+").replace("&","")
        hdplayer = await search(showname,season,episode,date,ismovie,client)
        url = await hls_url(hdplayer,client)
-       return url
+       return url,hdplayer
     except Exception as e:
           print("MammaMia: StreamingWatch Failed",e)
-          return None
+          return None,None
     
 
 async def test_animeworld():
