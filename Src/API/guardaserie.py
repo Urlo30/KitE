@@ -47,7 +47,7 @@ async def get_supervideo_link(link,client):
 async def search(clean_id,client):
     try:
         headers = random_headers.generate()
-        response = await client.get("https://stremio-rev-proxy.h-y.workers.dev/" + f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers)
+        response = await client.get(f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers)
         print("Response1",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('div',class_="mlnh-2"))
         div_mlnh2 = soup.select_one('div.mlnh-2:nth-of-type(2)')
@@ -63,7 +63,7 @@ async def search(clean_id,client):
 async def player_url(page_url, season, episode,client):
     try:
         headers = random_headers.generate()
-        response = await client.get("https://stremio-rev-proxy.h-y.workers.dev/" + page_url, allow_redirects=True, impersonate = "chrome124", headers = headers)
+        response = await client.get(page_url, allow_redirects=True, impersonate = "chrome124", headers = headers)
         print("Response2",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('a'))
         a_tag = soup.find('a', id = f"serie-{season}_{episode}")

@@ -11,6 +11,8 @@ if TF_PROXY == "1":
 TF_FORWARDPROXY = config.TF_ForwardProxy
 if TF_FORWARDPROXY == "1":
     ForwardProxy = env_vars.get('ForwardProxy')
+else:
+    ForwardProxy = ""
 TF_DOMAIN = config.TF_DOMAIN
 import urllib.parse
 async def search(showname,ismovie,date,client):

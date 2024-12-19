@@ -292,6 +292,7 @@ async def addon_stream(request: Request,config, type, id,):
                     if url_streaming_community is not None:
                         print(f"StreamingCommunity Found Results for {id}")
                         if quality_sc == "1080":
+                            print(url_streaming_community, url_720_streaming_community)
                             streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity1080'}})
                             streams['streams'].append({"name": f'{Name}\n720p Max','title': f'{Icon}StreamingCommunity\n  {slug_sc.replace("-"," ").capitalize()}', 'url': url_720_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
                         else:
@@ -305,10 +306,11 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"LordChannel Found Results for {id}")
                         streams['streams'].append({"name": f"{Name}\n720p",'title': f'{Icon}LordChannel 720p', 'url': url_lordchannel, 'behaviorHints': {'bingeGroup': 'lordchannel720'}})            
                 if provider_maps['FILMPERTUTTI'] == "1" and FT == "1":
-                    url_filmpertutti = await filmpertutti(id,client, MFP)
-                    if url_filmpertutti is not None:
+                    url_filmpertutti,Host = await filmpertutti(id,client, MFP)
+                    if url_filmpertutti is not None and Host is not None:
                         if MFP == "1":
-                            url_filmpertutti = f'{MFP_url}/extractor/video?api_password={MFP_password}&d={url_filmpertutti}&host=Mixdrop&redirect_stream=true'
+                            url_filmpertutti = f'{MFP_url}/extractor/video?api_password={MFP_password}&d={url_filmpertutti}&host={Host}&redirect_stream=true'
+                            print(url_filmpertutti)
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}Filmpertutti', 'url': url_filmpertutti,'behaviorHints': {'bingeGroup': 'filmpertutti'}})
                         else:
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}Filmpertutti', 'url': url_filmpertutti,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": "Mozilla/5.0 (Windows NT 10.10; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}}, 'notWebReady': True, 'bingeGroup': 'filmpertutti'}})

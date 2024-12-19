@@ -21,6 +21,17 @@ month_mapping = {
     'May': 'Maggio', 'Jun': 'Giugno', 'Jul': 'Luglio', 'Aug': 'Agosto',
     'Sep': 'Settembre', 'Oct': 'Ottobre', 'Nov': 'Novembre', 'Dec': 'Dicembre'
 }
+async def get_streamtape(link,client):
+    headers = {
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+    }
+    response = await client.get(link, headers=headers, impersonate = "chrome124")
+    regex = r"id=.*?(?=')"
+    matches = re.findall(regex, response.text)
+    i = 0
+    final_url = next((f"https://streamtape.com/get_video?{matches[i + 1]}" for i in range(len(matches) - 1) if matches[i] == matches[i + 1]), None)
+    return final_url
+
 
 async def search(query,imdb_id,client,season,ismovie):
     response = await client.get(query)
@@ -73,13 +84,16 @@ async def get_real_link(tlink,client):
     soup = BeautifulSoup(page.content, features="lxml",parse_only=SoupStrainer('iframe'))
     iframe_src = soup.find('iframe')['src']
     iframe_page = await client.get(iframe_src, headers=headers, allow_redirects=True, timeout = 30)
-    iframe_soup = BeautifulSoup(iframe_page.content, features="lxml")
+    iframe_soup = BeautifulSoup(iframe_page.content, features="lxml", parse_only=SoupStrainer('div',class_="megaButton"))
 
     mega_button = iframe_soup.find('div', attrs={'class': 'megaButton', 'rel': 'nofollow'}, string='MIXDROP')
     if mega_button:
         real_link = mega_button.get('meta-link')
         return real_link
-    
+    else:
+        mega_button = iframe_soup.find('div', attrs={'class': 'megaButton', 'rel': 'nofollow'}, string='STREAMTAPE')
+        real_link = mega_button.get('meta-link')
+        return real_link
 async def get_true_link(real_link,client):
     response = await client.get(real_link, headers=headers, allow_redirects=True,timeout = 30)
     [s1, s2] = re.search(r"\}\('(.+)',.+,'(.+)'\.split", response.text).group(1, 2)
@@ -120,26 +134,41 @@ async def filmpertutti(imdb,client,MFP):
         url,tid,actual_season = await search(query,imdb_id,client,season,ismovie)
     except:
         print("MammaMia: No results found for Filmpertutti")
-        return None
+        return None,None
     if ismovie == 0:
         episode_link =  get_episode_link(actual_season,episode,tid,url)
         #Let's get mixdrop link 
         real_link = await get_real_link(episode_link,client)
         if MFP == "1":
-            return real_link
+            if "mixdrop" in real_link:
+                Host = "Mixdrop"
+            elif "streamtape" in real_link:
+                Host = "Streamtape"
+            return real_link, Host
         #let's get delivery link, streaming link
-        streaming_link = await get_true_link(real_link,client)
-        print(streaming_link)
-        return streaming_link
+        if "mixdrop" in real_link:
+            streaming_link = await get_true_link(real_link,client)
+        elif "streamtape" in real_link:
+            streaming_link = await get_streamtape(real_link,client)
+        Host = None
+        return streaming_link, Host
     elif ismovie == 1:
         film_link = get_film(url)
         #Let's get mixdrop link
         real_link = await get_real_link(film_link,client)
         if MFP == "1":
-            return real_link
+            if "mixdrop" in real_link:
+                Host = "Mixdrop"
+            elif "streamtape" in real_link:
+                Host = "Streamtape"
+            return real_link, Host
+        if "mixdrop" in real_link:
+            streaming_link = await get_true_link(real_link,client)
+        elif "streamtape" in real_link:
+            streaming_link = await get_streamtape(real_link,client)
         #let's get delivery link, streaming link
-        streaming_link = await get_true_link(real_link,client)
-        return streaming_link
+        Host = None
+        return streaming_link, Host
     
 
 '''
