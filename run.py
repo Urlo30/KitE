@@ -38,6 +38,7 @@ else:
 MYSTERIUS = config.MYSTERIUS
 DLHD = config.DLHD
 SC = config.SC
+SC_DOMAIN = config.SC_DOMAIN
 FT = config.FT
 TF = config.TF
 LC = config.LC
@@ -293,10 +294,9 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"StreamingCommunity Found Results for {id}")
                         if quality_sc == "1080":
                             print(url_streaming_community, url_720_streaming_community)
-                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity1080'}})
-                            streams['streams'].append({"name": f'{Name}\n720p Max','title': f'{Icon}StreamingCommunity\n  {slug_sc.replace("-"," ").capitalize()}', 'url': url_720_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
+                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
                         else:
-                            streams['streams'].append({"name": f'{Name}\n{quality}p Max','title': f'{Icon}StreamingCommunity\n{slug_sc.replace("-","").capitalize()}', 'url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
+                            streams['streams'].append({"name":f'{Name}\n{quality} Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': f'streamingcommunity{quality}'}})
                 if provider_maps['LORDCHANNEL'] == "1" and LC == "1":
                     url_lordchannel,quality_lordchannel = await lordchannel(id,client)
                     if quality_lordchannel == "FULL HD" and url_lordchannel !=  None:
