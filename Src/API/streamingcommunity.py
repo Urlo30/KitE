@@ -116,8 +116,8 @@ async def get_film(tid,version,client):
     parsed_url = urlparse(iframe)
     query_params = parse_qs(parsed_url.query)
     random_headers = headers.generate()
-    random_headers['Referer'] = "https://streamingcommunity.buzz/"
-    random_headers['Origin'] = "https://streamingcommunity.buzz"
+    random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
+    random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
     random_headers['x-inertia'] = "true"
     random_headers['x-inertia-version'] = version
     #Get real token and expires by looking at the page in the iframe, vixcloud/embed
@@ -128,13 +128,14 @@ async def get_film(tid,version,client):
     expires = re.search(r"'expires':\s*'(\d+)'", script).group(1)
     quality = re.search(r'"quality":(\d+)', script).group(1)
     #Example url  https://vixcloud.co/playlist/231315?b=1&token=bce060eec3dc9d1965a5d258dc78c964&expires=1728995040&rendition=1080p
-    url = f'https://vixcloud.co/playlist/{vixid}.m3u8?expires={expires}'
+    url = f'https://vixcloud.co/playlist/{vixid}.m3u8?token={token}&expires={expires}&referer=1'
     if 'canPlayFHD' in query_params:
        canPlayFHD = 'h=1'
        url += "&h=1"
     if 'b' in query_params:
        b = 'b=1'
        url += "&b=1"
+    '''
     if quality == "1080":
         if "&h" in url:
             url = url
@@ -143,7 +144,8 @@ async def get_film(tid,version,client):
         elif quality == "1080" and "&b" and "&h" not in url:
             url = url + "&h=1"
     else:
-        url = url + f"&token={token}"        
+        url = url + f"&token={token}"      
+    '''  
     url720 = f'https://vixcloud.co/playlist/{vixid}.m3u8'
     return url,url720,quality
 
@@ -194,13 +196,14 @@ async def get_episode_link(episode_id,tid,version,client):
     expires = re.search(r"'expires':\s*'(\d+)'", script).group(1)
     quality = re.search(r'"quality":(\d+)', script).group(1)
     #Example url  https://vixcloud.co/playlist/231315?b=1&token=bce060eec3dc9d1965a5d258dc78c964&expires=1728995040&rendition=1080p
-    url = f'https://vixcloud.co/playlist/{vixid}.m3u8?expires={expires}'
+    url = f'https://vixcloud.co/playlist/{vixid}.m3u8?token={token}&expires={expires}&referer=1'
     if 'canPlayFHD' in query_params:
        canPlayFHD = 'h=1'
        url += "&h=1"
     if 'b' in query_params:
        b = 'b=1'
        url += "&b=1"
+    '''
     if quality == "1080":
         if "&h" in url:
             url = url
@@ -209,7 +212,8 @@ async def get_episode_link(episode_id,tid,version,client):
         elif quality == "1080" and "&b" and "&h" not in url:
             url = url + "&h=1"
     else:
-        url = url + f"&token={token}"        
+        url = url + f"&token={token}"
+    '''        
     url720 = f'https://vixcloud.co/playlist/{vixid}.m3u8'
     return url,url720,quality
 
