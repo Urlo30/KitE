@@ -108,7 +108,7 @@ def parse_links(resolution_links):
 async def cool(imdb,client):
     try:
         type = "Cool"    
-        general = is_movie(imdb)
+        general = await is_movie(imdb)
         ismovie = general[0]
         imdb_id = general[1]
         if ismovie == 0 : 

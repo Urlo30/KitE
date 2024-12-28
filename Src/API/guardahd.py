@@ -3,6 +3,28 @@ from bs4 import BeautifulSoup,SoupStrainer
 import re
 import Src.Utilities.config as config
 from fake_headers import Headers  
+from Src.Utilities.loadenv import load_env  
+import json, random
+env_vars = load_env()
+GH_PROXY = config.GH_PROXY
+proxies = {}
+if GH_PROXY == "1":
+    PROXY_CREDENTIALS = env_vars.get('PROXY_CREDENTIALS')
+    proxy_list = json.loads(PROXY_CREDENTIALS)
+    proxy = random.choice(proxy_list)
+    if proxy == "":
+        proxies = {}
+    else:
+        proxies = {
+            "http": proxy,
+            "https": proxy
+        }   
+GH_ForwardProxy = config.GH_ForwardProxy
+if GH_ForwardProxy == "1":
+    ForwardProxy = env_vars.get('ForwardProxy')
+else:
+    ForwardProxy = ""
+#Get domain
 
 GHD_DOMAIN = config.GHD_DOMAIN
 
@@ -11,7 +33,7 @@ random_headers = Headers()
 
 async def get_supervideo_link(link,client):
     headers = random_headers.generate()
-    response = await client.get(link, headers=headers, allow_redirects=True,timeout = 30)
+    response = await client.get(ForwardProxy + link, headers=headers, allow_redirects=True,timeout = 30)
     s2 = re.search(r"\}\('(.+)',.+,'(.+)'\.split", response.text).group(2)
     terms = s2.split("|")
     file_index = terms.index('file')
@@ -42,7 +64,7 @@ async def get_supervideo_link(link,client):
 
 async def search(clean_id,client):
     headers = random_headers.generate()
-    response = await client.get(f"https://mostraguarda.{GHD_DOMAIN}/set-movie-a/{clean_id}", allow_redirects=True, impersonate = "chrome124", headers = headers)
+    response = await client.get(ForwardProxy + f"https://mostraguarda.{GHD_DOMAIN}/set-movie-a/{clean_id}", allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
     soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('li'))
     li_tag = soup.find('li', class_='')
     href = "https:" + li_tag['data-link']
@@ -52,7 +74,7 @@ async def search(clean_id,client):
 
 async def guardahd(id,client):
     try:
-        general = is_movie(id)
+        general = await is_movie(id)
         ismovie = general[0]
         clean_id = general[1]
         if ismovie == 0:

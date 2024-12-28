@@ -119,7 +119,7 @@ async def get_mp4(client,link):
 
 async def ddlstream(imdb,client):
     try:
-        general = is_movie(imdb)
+        general = await is_movie(imdb)
         ismovie = general[0]
         id = general[1]
         type = "DDLStream"

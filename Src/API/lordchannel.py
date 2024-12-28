@@ -70,7 +70,7 @@ async def get_m3u8(video_url,client):
 
 async def lordchannel(imdb,client):
     try:
-        general = is_movie(imdb)
+        general = await is_movie(imdb)
         ismovie = general[0]
         imdb_id = general[1]
         type = "LordChannel"

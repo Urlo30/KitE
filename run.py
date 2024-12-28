@@ -38,6 +38,7 @@ else:
 MYSTERIUS = config.MYSTERIUS
 DLHD = config.DLHD
 SC = config.SC
+SC_DOMAIN = config.SC_DOMAIN
 FT = config.FT
 TF = config.TF
 LC = config.LC
@@ -285,17 +286,18 @@ async def addon_stream(request: Request,config, type, id,):
                     if results:
                         print(f"Mysterius Found Results for {id}")
                         for resolution, link in results.items():
-                            streams['streams'].append({'title': f'{Icon}Mysterious {resolution}', 'url': link})
+                            streams['streams'].append({'title': f'{Icon}Mysterious {resolution}', 'url': link, 'behaviorHints': {'bingeGroup': f'mysterius{resolution}'}})
                 if provider_maps['STREAMINGCOMMUNITY'] == "1" and SC == "1":
                     SC_FAST_SEARCH = provider_maps['SC_FAST_SEARCH']
                     url_streaming_community,url_720_streaming_community,quality_sc, slug_sc = await streaming_community(id,client,SC_FAST_SEARCH)
                     if url_streaming_community is not None:
                         print(f"StreamingCommunity Found Results for {id}")
                         if quality_sc == "1080":
-                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity1080'}})
-                            streams['streams'].append({"name": f'{Name}\n720p Max','title': f'{Icon}StreamingCommunity\n  {slug_sc.replace("-"," ").capitalize()}', 'url': url_720_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
+                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
+                            streams['streams'].append({"name": f'{Name}\n1080p Max 2', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-", " ").capitalize()}', 'url': "https://lorempizza-test1.hf.space/clone/manifest.m3u8?d=https%3A//vixcloud.co/playlist/249230.m3u8%3Ftoken%3D1b4c975f7ce2cc1089a6d520a596fb26%26expires%3D1740523211", 'behaviorHints': {'proxyHeaders': {"request": {"Host": "lorempizza-test1.hf.space", "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate, br, zstd", "Origin": "https://livepush.io", "DNT": "1", "Sec-GPC": "1", "Connection": "keep-alive", "Referer": "https://livepush.io/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Pragma": "no-cache", "Cache-Control": "no-cache", "TE": "trailers"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
+
                         else:
-                            streams['streams'].append({"name": f'{Name}\n{quality}p Max','title': f'{Icon}StreamingCommunity\n{slug_sc.replace("-","").capitalize()}', 'url': url_streaming_community,'behaviorHints': {'bingeGroup': 'streamingcommunity720'}})
+                            streams['streams'].append({"name":f'{Name}\n{quality} Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': f'streamingcommunity{quality}'}})
                 if provider_maps['LORDCHANNEL'] == "1" and LC == "1":
                     url_lordchannel,quality_lordchannel = await lordchannel(id,client)
                     if quality_lordchannel == "FULL HD" and url_lordchannel !=  None:
@@ -305,10 +307,10 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"LordChannel Found Results for {id}")
                         streams['streams'].append({"name": f"{Name}\n720p",'title': f'{Icon}LordChannel 720p', 'url': url_lordchannel, 'behaviorHints': {'bingeGroup': 'lordchannel720'}})            
                 if provider_maps['FILMPERTUTTI'] == "1" and FT == "1":
-                    url_filmpertutti = await filmpertutti(id,client, MFP)
-                    if url_filmpertutti is not None:
+                    url_filmpertutti,Host = await filmpertutti(id,client, MFP)
+                    if url_filmpertutti is not None and Host is not None:
                         if MFP == "1":
-                            url_filmpertutti = f'{MFP_url}/extractor/video?api_password={MFP_password}&d={url_filmpertutti}&host=Mixdrop&redirect_stream=true'
+                            url_filmpertutti = f'{MFP_url}/extractor/video?api_password={MFP_password}&d={url_filmpertutti}&host={Host}&redirect_stream=true'
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}Filmpertutti', 'url': url_filmpertutti,'behaviorHints': {'bingeGroup': 'filmpertutti'}})
                         else:
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}Filmpertutti', 'url': url_filmpertutti,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": "Mozilla/5.0 (Windows NT 10.10; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}}, 'notWebReady': True, 'bingeGroup': 'filmpertutti'}})
@@ -326,7 +328,7 @@ async def addon_stream(request: Request,config, type, id,):
                             streams['streams'].append({'title': f'{Icon}Tantifilm', 'url': url_tantifilm,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": "https://d000d.com/"}}, 'notWebReady': True, 'bingeGroup': 'tantifilm'}})
                 if provider_maps['STREAMINGWATCH'] == "1" and SW == "1":
                     url_streamingwatch,Referer = await streamingwatch(id,client)
-                    if url_streamingwatch:  
+                    if url_streamingwatch: 
                         print(f"StreamingWatch Found Results for {id}")
                         streams['streams'].append({'name': f"{Name}\n720/1080p",'title': f'{Icon}StreamingWatch', 'url': url_streamingwatch,  'behaviorHints': {'proxyHeaders': {"request": {"Referer": Referer}}, 'notWebReady': True, 'bingeGroup': 'streamingwatch'}})
                 if provider_maps['DDLSTREAM'] and DDL == "1":
@@ -350,14 +352,14 @@ async def addon_stream(request: Request,config, type, id,):
                         elif "delivery" in url_cbo1:
                             streams['streams'].append({'name': f'{Name}', 'title': f'{Icon}CB01\n Will work only on a local instance!', 'url': url_cbo1,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent}}, 'notWebReady': True, 'bingeGroup': 'cb01'}})
 
-                    else:
-                        streams['streams'].append({'name': f"{Name}",'title': f'{Icon}CB01\n Will work only on a local instance!', 'url': url_cbo1, 'behaviorHints': {'bingeGroup': 'cb01'}})
-            if provider_maps['GUARDASERIE'] and GS == "1":
+                        else:
+                            streams['streams'].append({'name': f"{Name}",'title': f'{Icon}CB01\n Will work only on a local instance!', 'url': url_cbo1, 'behaviorHints': {'bingeGroup': 'cb01'}})
+            if provider_maps['GUARDASERIE'] == "1" and GS == "1":
                 url_guardaserie = await guardaserie(id,client)
                 if url_guardaserie:
                     print(f"Guardaserie Found Results for {id}")
                     streams['streams'].append({'name': f"{Name}",'title': f'{Icon}Guardaserie', 'url': url_guardaserie, 'behaviorHints': {'bingeGroup': 'guardaserie'}})
-            if provider_maps['GUARDAHD'] and GHD == "1":
+            if provider_maps['GUARDAHD'] == "1" and GHD == "1":
                 url_guardahd = await guardahd(id,client)
                 if url_guardahd:
                     print(f"GuardaHD Found Results for {id}")

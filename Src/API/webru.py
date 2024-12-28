@@ -63,7 +63,6 @@ async def get_stream_link(id,site,MFP_CREDENTIALS,client):
             else:
                 print("No .m3u8 URL found.")
             stream_url = f"https://{domain}/lb/"+ webru_vary[id] + "/index.m3u8"
-        print(stream_url)
         mfp_url = MFP_CREDENTIALS[0]
         mfp_pass = MFP_CREDENTIALS[1]
         new_stream_url = f'{mfp_url}/proxy/hls/manifest.m3u8?api_password={mfp_pass}&d={stream_url}&h_Referer={Referer}&h_Origin={Origin}&h_User-Agent=Mozilla%2F5.0%20(Windows%20NT%2010.0%3B%20Win64%3B%20x64)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F58.0.3029.110%20Safari%2F537.3'

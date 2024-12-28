@@ -126,8 +126,8 @@ async def search_movie(showname,date,client):
     try:
         showname = showname.replace(" ","+")
         headers = fake_headers.generate()
-        headers['Referer'] = f'https://cb01.{CB_DOMAIN}/'
-        query = f'https://cb01.{CB_DOMAIN}/?s={showname}'
+        headers['Referer'] = f'https://cb01new.{CB_DOMAIN}/'
+        query = f'https://cb01new.{CB_DOMAIN}/?s={showname}'
         response = await client.get(query,headers=headers, impersonate = "chrome124")
         soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('div', class_='card-content'))
         cards = soup.find_all('div', class_='card-content')
@@ -154,8 +154,8 @@ async def search_series(showname,date,client):
     try:
         showname = showname.replace(" ","+")
         headers = fake_headers.generate()
-        headers['Referer'] = f'https://cb01.{CB_DOMAIN}/serietv/'
-        query = f'https://cb01.{CB_DOMAIN}/serietv/?s={showname}'
+        headers['Referer'] = f'https://cb01new.{CB_DOMAIN}/serietv/'
+        query = f'https://cb01new.{CB_DOMAIN}/serietv/?s={showname}'
         response = await client.get(query,headers=headers,impersonate = "chrome124")
         soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('div', class_='card-content'))
         cards = soup.find_all('div', class_='card-content')
@@ -230,7 +230,6 @@ async def series_redirect_url(link,season,episode,client,MFP):
                          match = re.search(pattern2, response.text)
                          if match:
                               maxstream_link = match.group(1)
-                    print(maxstream_link)
                     if "stayonline" in maxstream_link:
                             maxstream_link =await get_stayonline(maxstream_link,client)
                     maxstream_real_link = await get_uprot(maxstream_link,client)
@@ -256,7 +255,7 @@ async def series_redirect_url(link,season,episode,client,MFP):
 
 async def cb01(id,client,MFP):
     try:
-        general = is_movie(id)
+        general = await is_movie(id)
         ismovie = general[0]
         real_id = general[1]
         type = "Cb01"
@@ -303,7 +302,7 @@ async def test_animeworld():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
         # Replace with actual id, for example 'anime_id:episode' format
-        test_id = "tmdb245256:1:1"  # This is an example ID format
+        test_id = "tt0413573:19:1"  # This is an example ID format
         MFP = "1"
         results = await cb01(test_id, client,MFP)
 

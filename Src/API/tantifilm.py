@@ -11,6 +11,8 @@ if TF_PROXY == "1":
 TF_FORWARDPROXY = config.TF_ForwardProxy
 if TF_FORWARDPROXY == "1":
     ForwardProxy = env_vars.get('ForwardProxy')
+else:
+    ForwardProxy = ""
 TF_DOMAIN = config.TF_DOMAIN
 import urllib.parse
 async def search(showname,ismovie,date,client):
@@ -160,7 +162,9 @@ async def true_url(protect_link,client):
         "Range": "bytes=0-",
         "Referer": "https://d000d.com/",
     }
-    
+    doodstream_url = protect_link
+    proxies = {}
+
     if TF_PROXY == "1":
         import random
         import json
@@ -176,12 +180,10 @@ async def true_url(protect_link,client):
             }   
     
     elif TF_FORWARDPROXY == "1":
-        proxies = {}
         response = await client.head(protect_link, allow_redirects=True, impersonate = "chrome120", proxies = proxies)
         doodstream_url = response.url
     response = await client.get(ForwardProxy + doodstream_url, allow_redirects=True, impersonate = "chrome120", proxies = proxies)
  
-    
     if response.status_code == 200:
         # Get unique timestamp for the request      
         real_time = str(int(time.time()))
@@ -213,7 +215,7 @@ async def true_url(protect_link,client):
 async def tantifilm(imdb,client,TF_FAST_SEARCH):
     urls = None
     try:
-        general = is_movie(imdb)
+        general = await is_movie(imdb)
         ismovie = general[0]
         imdb_id = general[1]
         if ismovie == 0 : 

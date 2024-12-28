@@ -82,7 +82,7 @@ async def hls_url(hdplayer,client):
     return url
 async def streamingwatch(imdb,client):
     try:
-       general = is_movie(imdb)
+       general = await is_movie(imdb)
        ismovie = general[0]
        imdb_id = general[1]
        type = "StreamingWatch"

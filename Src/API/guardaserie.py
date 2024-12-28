@@ -3,13 +3,34 @@ from bs4 import BeautifulSoup,SoupStrainer
 import re
 import Src.Utilities.config as config
 from fake_headers import Headers  
-
+from Src.Utilities.loadenv import load_env  
+import json, random
+env_vars = load_env()
+GS_PROXY = config.GS_PROXY
+proxies = {}
+if GS_PROXY == "1":
+    PROXY_CREDENTIALS = env_vars.get('PROXY_CREDENTIALS')
+    proxy_list = json.loads(PROXY_CREDENTIALS)
+    proxy = random.choice(proxy_list)
+    if proxy == "":
+        proxies = {}
+    else:
+        proxies = {
+            "http": proxy,
+            "https": proxy
+        }   
+GS_ForwardProxy = config.GS_ForwardProxy
+if GS_ForwardProxy == "1":
+    ForwardProxy = env_vars.get('ForwardProxy')
+else:
+    ForwardProxy = ""
+#Get domain
 GS_DOMAIN = config.GS_DOMAIN
 random_headers = Headers()
 
 async def get_supervideo_link(link,client):
     headers = random_headers.generate()
-    response = await client.get(link, headers=headers, allow_redirects=True,timeout = 30)
+    response = await client.get(ForwardProxy + link, headers=headers, allow_redirects=True,timeout = 30)
     s2 = re.search(r"\}\('(.+)',.+,'(.+)'\.split", response.text).group(2)
     terms = s2.split("|")
     file_index = terms.index('file')
@@ -47,7 +68,7 @@ async def get_supervideo_link(link,client):
 async def search(clean_id,client):
     try:
         headers = random_headers.generate()
-        response = await client.get(f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers)
+        response = await client.get(ForwardProxy + f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
         print("Response1",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('div',class_="mlnh-2"))
         div_mlnh2 = soup.select_one('div.mlnh-2:nth-of-type(2)')
@@ -63,8 +84,7 @@ async def search(clean_id,client):
 async def player_url(page_url, season, episode,client):
     try:
         headers = random_headers.generate()
-        response = await client.get(page_url, allow_redirects=True, impersonate = "chrome124", headers = headers)
-        print("Response2",response)
+        response = await client.get(ForwardProxy + page_url, allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('a'))
         a_tag = soup.find('a', id = f"serie-{season}_{episode}")
         href = a_tag['data-link']
@@ -78,7 +98,7 @@ async def player_url(page_url, season, episode,client):
 
 async def guardaserie(id,client):
     try:
-        general = is_movie(id)
+        general = await is_movie(id)
         ismovie = general[0]
         clean_id = general[1]
         season = general[2]

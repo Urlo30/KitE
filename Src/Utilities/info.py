@@ -161,7 +161,7 @@ async def get_info_kitsu(kitsu_id,client):
 
 
 
-def is_movie(imdb_id):
+async def is_movie(imdb_id):
     if "tmdb:" in imdb_id:
         imdb_id = imdb_id.replace("tmdb:","")
     if ":"  in imdb_id:
