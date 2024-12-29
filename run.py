@@ -298,7 +298,8 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"StreamingCommunity Found Results for {id}")
                         if Remote_Instance == "1":
                             from urllib.parse import quote
-                            url_streaming_community = instance_url + "/clone/manifest.m3u8?d=" + quote(url_streaming_community)
+                            url_streaming_community = url_streaming_community.replace("?","&")
+                            url_streaming_community = instance_url + "/vixcloud/manifest.m3u8?d=" + url_streaming_community
                             print(url_streaming_community)
                         if quality_sc == "1080":
                             streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"user-agent": User_Agent}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
