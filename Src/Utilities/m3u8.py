@@ -25,7 +25,7 @@ async def clone_m3u8(d: str = None):
 
 
 @router.get("/vixcloud/manifest.m3u8")
-async def clone2_m3u8(d:str,token:str,expires:str,h:str):
+async def clone2_m3u8(d:str,token:str,expires:str,h:str = None):
     try:
         m3u8 = f'{d}?token={token}&expires={expires}&h={h}'
         print(m3u8)
