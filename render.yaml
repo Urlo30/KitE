@@ -4,7 +4,7 @@ services:
     runtime: python  
     buildCommand: pip install -r requirements.txt  
     startCommand: python3 run.py  
-    instanceType: free 
+    plan: free 
     region: frankfurt
     envVars:
       # Sets a hardcoded value
