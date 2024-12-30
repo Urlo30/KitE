@@ -1,15 +1,29 @@
 {
-  "devCommand": "uvicorn run:app --host 0.0.0.0 --port 8080",
-  "builds": [
-    {
-      "src": "/run.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/run.py"
-    }
-  ]
+    "version": 2,
+    "public": false,
+    "builds": [
+        {
+            "src": "run.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/",
+            "dest": "run.py"
+        },
+        {
+            "src": "/stream",
+            "dest": "run.py"
+        },
+        {
+            "src": "/catalog",
+            "dest": "run.py"
+        }
+        ,
+        {
+            "src": "/meta",
+            "dest": "run.py"
+        }
+    ]
 }
