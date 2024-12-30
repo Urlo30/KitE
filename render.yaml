@@ -1,0 +1,11 @@
+services:
+  - type: web_service
+    name: MammaMia  
+    env: python  
+    buildCommand: pip install -r requirements.txt  
+    startCommand: python3 run.py  
+    instanceType: free 
+    region: frankfurt  
+    envVars: 
+      PORT: "8080"  
+      TMDB_KEY: "" 
