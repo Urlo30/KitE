@@ -24,7 +24,7 @@ async def clone_m3u8(d: str = None):
 #This is just for testing, ignore that endpoint and the func
 
 
-@router.get("/vixcloud/manifest.m3u8", methods=["GET", "HEAD"])
+@router.api_route("/vixcloud/manifest.m3u8", methods=["GET", "HEAD"])
 async def clone2_m3u8(d:str,token:str,expires:str,h:str = None):
     try:
         if h:
