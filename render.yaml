@@ -1,11 +1,18 @@
 services:
-  - type: web_service
+  - type: web
     name: MammaMia  
-    env: python  
+    runtime: python  
     buildCommand: pip install -r requirements.txt  
     startCommand: python3 run.py  
     instanceType: free 
-    region: frankfurt  
-    envVars: 
-      PORT: "8080"  
-      TMDB_KEY: "" 
+    region: frankfurt
+    repo: https://github.com/UrloMythus/MammaMia
+    envVars:
+    # Sets a hardcoded value
+    # (DO NOT hardcode secrets in your Blueprint file!)
+      - key: PORT
+        value: 8080
+       # Prompts for a value in the Render Dashboard on creation
+  # (useful for secrets)
+      - key: TMDB_KEY
+        sync: false
