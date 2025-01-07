@@ -151,8 +151,8 @@ async def animeworld(id,client):
                     showname = showname.replace(":", "")
         final_urls = await search(showname,date,ismovie,episode,client)
         return final_urls
-    except:
-        print("Animeworld failed")
+    except Exception as e:
+        print("Animeworld failed",e)
         return None
 '''
 async def test_animeworld():
