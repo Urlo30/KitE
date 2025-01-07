@@ -13,7 +13,20 @@ User_Agent= "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML
 
 env_vars = load_env()
 SC_PROXY = config.SC_PROXY
+VX_PROXY = config.VX_PROXY
 proxies = {}
+proxies2 = {}
+if VX_PROXY == "1":
+    PROXY_CREDENTIALS = env_vars.get('PROXY_CREDENTIALS')
+    proxy_list = json.loads(PROXY_CREDENTIALS)
+    proxy = random.choice(proxy_list)
+    if proxy == "":
+        proxies2 = {}
+    else:
+        proxies2 = {
+            "http": proxy,
+            "https": proxy
+        }      
 if SC_PROXY == "1":
     PROXY_CREDENTIALS = env_vars.get('PROXY_CREDENTIALS')
     proxy_list = json.loads(PROXY_CREDENTIALS)
@@ -25,8 +38,17 @@ if SC_PROXY == "1":
             "http": proxy,
             "https": proxy
         }   
+    if VX_PROXY == "1":
+        proxies2 = proxy
+ 
 SC_ForwardProxy = config.SC_ForwardProxy
+VX_ForwardProxy = config.VX_ForwardProxy
 if SC_ForwardProxy == "1":
+    ForwardProxy = env_vars.get('ForwardProxy')
+else:
+    ForwardProxy = ""
+
+if VX_ForwardProxy == "1":
     ForwardProxy = env_vars.get('ForwardProxy')
 else:
     ForwardProxy = ""
@@ -126,7 +148,7 @@ async def get_film(tid,version,client):
     random_headers['User-Agent'] = User_Agent
     random_headers['user-agent'] = User_Agent
     #Get real token and expires by looking at the page in the iframe, vixcloud/embed
-    resp = await client.get(ForwardProxy + iframe, headers = random_headers, allow_redirects=True,impersonate= "chrome124", proxies = proxies)
+    resp = await client.get(ForwardProxy + iframe, headers = random_headers, allow_redirects=True,impersonate= "chrome124", proxies = proxies2)
     soup=  BeautifulSoup(resp.text, "lxml")
     script = soup.find("body").find("script").text
     token = re.search(r"'token':\s*'(\w+)'", script).group(1)
@@ -204,7 +226,7 @@ async def get_episode_link(episode_id,tid,version,client):
     parsed_url = urlparse(iframe)
     query_params = parse_qs(parsed_url.query)
     #Get real token and expires by looking at the page in the iframe, vixcloud/embed
-    resp = await client.get(ForwardProxy + iframe, headers = random_headers, allow_redirects=True, impersonate = "chrome124", proxies = proxies)
+    resp = await client.get(ForwardProxy + iframe, headers = random_headers, allow_redirects=True, impersonate = "chrome124", proxies = proxies2)
     soup=  BeautifulSoup(resp.text, "lxml")
     script = soup.find("body").find("script").text
     token = re.search(r"'token':\s*'(\w+)'", script).group(1)

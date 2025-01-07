@@ -80,7 +80,7 @@ Movies, Series, Anime and Live TV are supported.
 
   
 
-To host this project with Hugging Face, go to the [linked](https://huggingface.co/spaces/MammaMia-Urlo/CloneThisSpace/) page and follow these steps:
+To host this project with Hugging Face, go to the [linked](https://huggingface.co/spaces/aiMAmmaM/DuplicateTheSpace) page and follow these steps:
 
   
 
@@ -94,7 +94,7 @@ To host this project with Hugging Face, go to the [linked](https://huggingface.c
 
   
 
-2. Go to [linked](https://huggingface.co/spaces/MammaMia-Urlo/CloneThisSpace) page and click on three dots on the top (right) part of the screen
+2. Go to [linked](https://huggingface.co/spaces/aiMAmmaM/DuplicateTheSpace) page and click on three dots on the top (right) part of the screen
 
 3. Click Duplicate this Space
 
@@ -130,7 +130,7 @@ How do I handle Updates ? First of all you will need to go to your GitHub Repo a
 
 ## Render
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/UrloMythus/MaTest)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/UrloMythus/MammaMia)
 
   
 
@@ -197,7 +197,7 @@ Remember, load_env and Public Instance needs to be disabled in the config.json a
   
 
 # Vercel
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUrloMythus%2FMaTest&env=PORT,TMDB_KEY&envDescription=PORT%20(8080)%20and%20API%20KEY%20of%20TMDB&envLink=https%3A%2F%2Fgithub.com%2FUrloMythus%2FMaTest%2Fblob%2Fmain%2Fexample.env)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUrloMythus%2FMammaMia&env=PORT,TMDB_KEY&envDescription=PORT%20(8080)%20and%20API%20KEY%20of%20TMDB&envLink=https%3A%2F%2Fgithub.com%2FUrloMythus%2FMammaMia%2Fblob%2Fmain%2Fexample.env)
 
   
 
