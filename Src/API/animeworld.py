@@ -112,6 +112,9 @@ async def old_search(showname,date,ismovie,episode,client):
 
 async def search(showname,date,ismovie,episode,client):
     search_year = date[:4] 
+    response = await client.get(f'https://www.animeworld.so')
+    print(response.text)
+    print(response)
     response = await client.get(f'https://www.animeworld.so/filter?year={search_year}&sort=2&keyword={showname}',allow_redirects=True, impersonate = "chrome120")
     print(response.text)
     soup = BeautifulSoup(response.text,'lxml')
