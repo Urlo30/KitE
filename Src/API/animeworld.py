@@ -5,6 +5,9 @@ import json
 from Src.Utilities.info import get_info_kitsu
 import Src.Utilities.config as config
 import re
+from fake_headers import Headers  
+random_headers = Headers()
+
 AW_DOMAIN = config.AW_DOMAIN
 months = {
         "Gennaio": "January", "Febbraio": "February", "Marzo": "March", 
@@ -112,10 +115,9 @@ async def old_search(showname,date,ismovie,episode,client):
 
 async def search(showname,date,ismovie,episode,client):
     search_year = date[:4] 
-    response = await client.get(f'https://www.animeworld.so')
-    print(response.text)
-    print(response)
-    response = await client.get(f'https://www.animeworld.so/filter?year={search_year}&sort=2&keyword={showname}',allow_redirects=True, impersonate = "chrome120")
+    headers = random_headers.generate()
+
+    response = await client.get(f'https://www.animeworld.so/filter?year={search_year}&sort=2&keyword={showname}',allow_redirects=True, impersonate = "chrome124", headers = headers)
     print(response.text)
     soup = BeautifulSoup(response.text,'lxml')
     anime_list = soup.find_all('a', class_=['poster', 'tooltipstered'])
@@ -148,7 +150,6 @@ async def animeworld(id,client):
         else:
             episode = id.split(":")[2]
         showname,date = await get_info_kitsu(kitsu_id,client)
-        print(showname,date)
         for key in showname_replace:
             if key in showname:  # Check if the key is a substring of showname
                 showname = showname.replace(key, showname_replace[key])
@@ -156,10 +157,10 @@ async def animeworld(id,client):
                     showname = showname.replace(":", "")
         final_urls = await search(showname,date,ismovie,episode,client)
         return final_urls
-    except Exception as e:
-        print("Animeworld failed",e)
+    except:
+        print("Animeworld failed")
         return None
-'''
+
 async def test_animeworld():
     async with AsyncSession() as client:
         # Replace with actual id, for example 'anime_id:episode' format
@@ -171,4 +172,3 @@ if __name__ == "__main__":
     from curl_cffi.requests import AsyncSession
     import asyncio
     asyncio.run(test_animeworld())
-    '''
