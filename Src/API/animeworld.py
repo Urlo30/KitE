@@ -113,6 +113,7 @@ async def old_search(showname,date,ismovie,episode,client):
 async def search(showname,date,ismovie,episode,client):
     search_year = date[:4] 
     response = await client.get(f'https://www.animeworld.so/filter?year={search_year}&sort=2&keyword={showname}',allow_redirects=True, impersonate = "chrome120")
+    print(response.text)
     soup = BeautifulSoup(response.text,'lxml')
     anime_list = soup.find_all('a', class_=['poster', 'tooltipstered'])
     final_urls = []
@@ -144,6 +145,7 @@ async def animeworld(id,client):
         else:
             episode = id.split(":")[2]
         showname,date = await get_info_kitsu(kitsu_id,client)
+        print(showname,date)
         for key in showname_replace:
             if key in showname:  # Check if the key is a substring of showname
                 showname = showname.replace(key, showname_replace[key])
